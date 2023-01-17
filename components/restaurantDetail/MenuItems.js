@@ -10,7 +10,7 @@ import React from "react";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { useDispatch, useSelector } from "react-redux";
 
-const MenuItem = ({ restaurantName, foods }) => {
+const MenuItem = ({ restaurantName, foods, hideCheckbox, marginLeft }) => {
   const dispatch = useDispatch();
   const selectItem = (item, checkboxValue) =>
     dispatch({
@@ -39,16 +39,20 @@ const MenuItem = ({ restaurantName, foods }) => {
         <Pressable key={index}>
           <View style={{ borderBottomColor: "#eee", borderBottomWidth: 1 }}>
             <View style={styles.menuItemStyle}>
-              <BouncyCheckbox
-                iconStyle={{ borderColor: "lightgray", borderRadius: 0 }}
-                fillColor="green"
-                isChecked={isFoodInCart(food, cartItems)}
-                onPress={(checkboxValue) =>
-                  checkboxCheckHandler(food, checkboxValue)
-                }
-              />
+              {hideCheckbox ? (
+                <></>
+              ) : (
+                <BouncyCheckbox
+                  iconStyle={{ borderColor: "lightgray", borderRadius: 0 }}
+                  fillColor="green"
+                  isChecked={isFoodInCart(food, cartItems)}
+                  onPress={(checkboxValue) =>
+                    checkboxCheckHandler(food, checkboxValue)
+                  }
+                />
+              )}
               <FoodInfo food={food} />
-              <FoodImage food={food} />
+              <FoodImage food={food} marginLeft={marginLeft ? marginLeft : 0} />
             </View>
           </View>
         </Pressable>
@@ -81,7 +85,12 @@ const FoodInfo = (props) => (
 const FoodImage = (props) => (
   <View>
     <Image
-      style={{ width: 100, height: 100, borderRadius: 8 }}
+      style={{
+        width: 100,
+        height: 100,
+        borderRadius: 8,
+        marginLeft: props.marginLeft,
+      }}
       source={{
         uri: props.food.image,
       }}
