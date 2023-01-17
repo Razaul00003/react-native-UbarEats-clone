@@ -33,11 +33,14 @@ const OrderCompleted = () => {
 
   const getDatafromFirestore = async () => {
     const querySnapshot = await getDocs(collection(db, "orders"));
-    querySnapshot.docs.map((doc) => selectedOrder(doc.data()));
+    querySnapshot.docs.map((doc) => {
+      console.log(doc._document.data);
+      selectedOrder(doc.data());
+    });
   };
 
   useEffect(() => {
-    getDatafromFirestore();
+    return () => getDatafromFirestore();
   }, []);
 
   return (
