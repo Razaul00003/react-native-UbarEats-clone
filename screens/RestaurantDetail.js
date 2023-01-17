@@ -50,7 +50,7 @@ const RestaurantDetail = ({ route, navigation }) => {
       <StatusBar barStyle="auto" />
       <About route={route} />
       <MenuItems restaurantName={route.params.name} foods={foods} />
-      <ViewCart navigation={navigation} restaurantName={route.params.name} />
+      <ViewCart navigation={navigation} />
     </View>
   );
 };

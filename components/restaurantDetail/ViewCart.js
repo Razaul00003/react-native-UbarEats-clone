@@ -3,12 +3,16 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { StyleSheet } from "react-native";
 import OrderItem from "./OrderItem";
+import db from "../../firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
-const ViewCart = () => {
+const ViewCart = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { items, restaurantName } = useSelector(
     (state) => state.cartReducer.selectedItems
   );
+
   const total = items
     .map((item) => Number(item.price.replace("$", "")))
     .reduce((prev, curr) => prev + curr, 0);
@@ -16,6 +20,24 @@ const ViewCart = () => {
     style: "currency",
     currency: "USD",
   });
+
+  const adOrderToFireBase = async () => {
+    //adding to db
+    try {
+      setLoading(true);
+      const docRef = await addDoc(collection(db, "orders"), {
+        items,
+        restaurantName,
+        createdAt: serverTimestamp(),
+      });
+      setLoading(false);
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+    setModalVisible(false);
+    navigation.navigate("OrderCompleted");
+  };
 
   const styles = StyleSheet.create({
     modalContainer: {
@@ -74,13 +96,22 @@ const ViewCart = () => {
                   position: "relative",
                   alignItems: "center",
                 }}
-                onPress={() => setModalVisible(false)}
+                onPress={() => adOrderToFireBase()}
               >
                 <Text style={{ color: "white", fontSize: 20 }}>Check Out</Text>
                 <Text style={{ color: "white", fontSize: 20 }}>
                   ${totalUSD}
                 </Text>
               </TouchableOpacity>
+            </View>
+            <View
+              style={{ textAlign: "center", alignItems: "center", padding: 30 }}
+            >
+              {loading && (
+                <Text style={{ colo: "black", fontSize: 20 }}>
+                  Adding to database...
+                </Text>
+              )}
             </View>
           </View>
         </View>
