@@ -1,15 +1,16 @@
 import { SafeAreaView, ScrollView, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import HeaderTabs from "../components/HeaderTabs";
-import SearchBar from "../components/SearchBar";
-import Categories from "../components/Categories";
+import HeaderTabs from "../components/home/HeaderTabs";
+import SearchBar from "../components/home/SearchBar";
+import Categories from "../components/home/Categories";
 import RestaurantItems, {
   localRestaurants,
-} from "../components/RestaurantItems";
+} from "../components/home/RestaurantItems";
 import { YELP_API } from "@env";
+import BottomTabs from "../components/home/BottomTabs";
 const YELP_API_KEY = YELP_API;
 
-const Home = () => {
+const Home = ({ navigation }) => {
   const [restaurantData, setRestaurantData] = useState(localRestaurants);
   const [city, setCity] = useState("San Francisco");
   const [activeTab, setActiveTab] = useState("Delivery");
@@ -34,6 +35,7 @@ const Home = () => {
       );
   };
 
+  // use
   useEffect(() => {
     getRestaurantsFromYelp();
   }, [city, activeTab]);
@@ -52,8 +54,12 @@ const Home = () => {
       </View>
       <ScrollView showsHorizontalScrollIndicator={false}>
         <Categories />
-        <RestaurantItems restaurantData={restaurantData} />
+        <RestaurantItems
+          navigation={navigation}
+          restaurantData={restaurantData}
+        />
       </ScrollView>
+      <BottomTabs />
     </SafeAreaView>
   );
 };
